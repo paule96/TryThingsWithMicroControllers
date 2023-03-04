@@ -57,7 +57,8 @@
 		"recommendations": [
 			"platformio.platformio-ide",
 			"analytic-signal.preview-pdf",
-			"ms-vscode.cpptools-extension-pack"
+			"ms-vscode.cpptools-extension-pack",
+			"ms-vsliveshare.vsliveshare"
 		]
 	}
 }
