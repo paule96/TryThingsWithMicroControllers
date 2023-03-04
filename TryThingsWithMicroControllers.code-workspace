@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "extensions",
+			"path": "../../../../home/vscode/.vscode-server/extensions"
+		},
+		{
+			"name": "root",
+			"path": "/workspaces/TryThingsWithMicroControllers"
+		}
+	],
+	"settings": {}
+}

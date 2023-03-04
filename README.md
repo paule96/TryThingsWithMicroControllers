@@ -1,3 +1,16 @@
+# Learning
+
+## Setup project
+
+First you need to setup the project. Go to an empty folder and run the following:
+
+```bash
+/home/vscode/.platformio/penv/bin/pio project init -b esp32-s3-devkitc-1 --ide vscode --project-option "framework=espidf"
+```
+
+This will setup a project for the `Espressif ESP32-S3`. The development framework that is used is `Espressif IoT Development Framework`.
+
+
 ## Freenove_Ultimate_Starter_Kit_for_ESP32_S3
 
 A kit with a Freenove® ESP32-S3 Board for learning programming and electronics.
