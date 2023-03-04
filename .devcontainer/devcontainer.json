@@ -14,7 +14,8 @@
 		"vscode": {
 			"extensions": [
 				"platformio.platformio-ide",
-				"analytic-signal.preview-pdf"
+				"analytic-signal.preview-pdf",
+				"ms-vscode.cpptools-extension-pack"
 			]
 		}
 	}
