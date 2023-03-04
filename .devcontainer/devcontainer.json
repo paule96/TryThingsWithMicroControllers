@@ -9,7 +9,7 @@
 			"version": "latest"
 		}
 	},
-	"onCreateCommand": "sudo apt install -y python3-venv",
+	"onCreateCommand": "sudo apt update && sudo apt install -y python3-venv",
 	"customizations": {
 		"vscode": {
 			"extensions": [
