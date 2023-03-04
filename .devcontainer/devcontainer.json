@@ -13,7 +13,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"platformio.platformio-ide"
+				"platformio.platformio-ide",
+				"analytic-signal.preview-pdf"
 			]
 		}
 	}
