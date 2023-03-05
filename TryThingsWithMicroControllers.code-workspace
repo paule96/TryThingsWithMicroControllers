@@ -1,18 +1,14 @@
 {
 	"folders": [
 		{
-			"path": "/workspaces/TryThingsWithMicroControllers/FirstTry"
+			"path": "FirstTry"
 		},
 		{
-			"path": "/workspaces/TryThingsWithMicroControllers/secondtry"
-		},
-		{
-			"name": "extensions",
-			"path": "../../../../home/vscode/.vscode-server/extensions"
+			"path": "secondtry"
 		},
 		{
 			"name": "root",
-			"path": "/workspaces/TryThingsWithMicroControllers"
+			"path": "./"
 		}
 	],
 	"launch": {
