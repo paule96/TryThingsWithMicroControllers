@@ -4,6 +4,9 @@
 			"path": "/workspaces/TryThingsWithMicroControllers/FirstTry"
 		},
 		{
+			"path": "/workspaces/TryThingsWithMicroControllers/secondtry"
+		},
+		{
 			"name": "extensions",
 			"path": "../../../../home/vscode/.vscode-server/extensions"
 		},
