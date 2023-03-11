@@ -14,7 +14,7 @@ public:
     ~Camera();
     void SetupCamera();
     char *GetCameraUi();
-    Frame &GetCameraStream();
+    Frame GetCameraStream();
 
 private:
     camera_config_t setupCameraPins();

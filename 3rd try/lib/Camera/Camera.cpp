@@ -159,7 +159,7 @@ char *Camera::GetCameraUi()
     return NULL;
 }
 
-Frame &Camera::GetCameraStream()
+Frame Camera::GetCameraStream()
 {
     Frame frame = Frame();
     if (Camera::fb)
