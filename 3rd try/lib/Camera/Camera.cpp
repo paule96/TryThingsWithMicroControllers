@@ -148,7 +148,7 @@ static int64_t last_frame = 0;
 
 Frame& GetCameraStream()
 {
-    Frame frame;
+    Frame frame = Frame();
     if (fb)
     {
         esp_camera_fb_return(fb);
