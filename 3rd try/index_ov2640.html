@@ -704,7 +704,7 @@
                     <div id="stream-container" class="image-container hidden">
                         <a id="save-still" href="#" class="button save" download="capture.jpg">Save</a>
                         <div class="close" id="close-stream">×</div>
-                        <img id="stream" src="" crossorigin>
+                        <img id="stream" src="/stream" crossorigin>
                     </div>
                 </figure>
             </div>
@@ -712,7 +712,7 @@
         <script>
 document.addEventListener('DOMContentLoaded', function (event) {
   var baseHost = document.location.origin
-  var streamUrl = baseHost + ':81'
+  var streamUrl = baseHost + '/stream'
 
   function fetchUrl(url, cb){
     fetch(url)

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "esp_camera.h"
+#include "Camera.h"
 
 /**
  * @brief Logging tag for http server
@@ -27,6 +28,11 @@ static const char *TAG = "camera";
 #define HREF_GPIO_NUM 7
 #define PCLK_GPIO_NUM 13
 #pragma endregion camera_pins
+
+Frame::Frame(size_t jpg_buf_len, uint8_t *jpg_buf){
+    Frame::_jpg_buf_len = _jpg_buf_len;
+    Frame::_jpg_buf = _jpg_buf;
+}
 
 /**
  * @brief creates a config object, wich sets all the important, settings to find and interact with the camera
@@ -101,7 +107,7 @@ void SetupCamera()
  * @brief finds out wich camera module is used and returns the path to the HTML UI for it
  * @return the path to the UI. If the camera can't be found,
  * an error is logged and null is the return
-*/
+ */
 char *GetCameraUi()
 {
     sensor_t *s = esp_camera_sensor_get();
@@ -127,4 +133,59 @@ char *GetCameraUi()
         ESP_LOGE(TAG, "Camera sensor not found");
     }
     return NULL;
+}
+
+camera_fb_t *fb = NULL;
+
+Frame GetCameraStream()
+{
+    struct timeval _timestamp;
+    esp_err_t res = ESP_OK;
+    size_t _jpg_buf_len = 0;
+    uint8_t *_jpg_buf = NULL;
+    char *part_buf[128];
+    static int64_t last_frame = 0;
+    if (fb)
+    {
+        esp_camera_fb_return(fb);
+        fb = NULL;
+        _jpg_buf = NULL;
+    }
+    else if (_jpg_buf)
+    {
+        free(_jpg_buf);
+        _jpg_buf = NULL;
+    }
+    if (!last_frame)
+    {
+        last_frame = esp_timer_get_time();
+    }
+    fb = esp_camera_fb_get();
+    if (!fb)
+    {
+        ESP_LOGE(TAG, "Camera capture failed");
+        res = ESP_FAIL;
+    }
+    else
+    {
+        _timestamp.tv_sec = fb->timestamp.tv_sec;
+        _timestamp.tv_usec = fb->timestamp.tv_usec;
+        if (fb->format != PIXFORMAT_JPEG)
+        {
+            bool jpeg_converted = frame2jpg(fb, 80, &_jpg_buf, &_jpg_buf_len);
+            esp_camera_fb_return(fb);
+            fb = NULL;
+            if (!jpeg_converted)
+            {
+                ESP_LOGE(TAG, "JPEG compression failed");
+                res = ESP_FAIL;
+            }
+        }
+        else
+        {
+            _jpg_buf_len = fb->len;
+            _jpg_buf = fb->buf;
+        }
+    }
+    return Frame(_jpg_buf_len, _jpg_buf);
 }
