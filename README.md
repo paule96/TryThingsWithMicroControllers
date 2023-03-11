@@ -24,7 +24,7 @@ Start a project with:
 ```bash
 git fetch
 git pull
-/home/vscode/.platformio/penv/bin/pio run --target upload --target monitor --environment esp32-s3-devkitc1
+~/.platformio/penv/bin/pio run --target upload --target monitor --environment esp32-s3-devkitc1
 ```
 
 ## Freenove_Ultimate_Starter_Kit_for_ESP32_S3
