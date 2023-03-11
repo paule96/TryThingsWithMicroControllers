@@ -36,7 +36,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     }else{
       maxBufferRead = maxLen;
     }
-    memccpy(buffer, &frame._jpg_buf, 0, maxBufferRead);
+    memcpy(buffer, &frame._jpg_buf,maxBufferRead);
     return maxBufferRead; });
 }
 
