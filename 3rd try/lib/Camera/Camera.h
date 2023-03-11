@@ -15,14 +15,13 @@ public:
     void SetupCamera();
     char *GetCameraUi();
     Frame GetCameraStream();
-
+    struct timeval _timestamp;
 private:
     camera_config_t setupCameraPins();
     camera_fb_t *fb;
-    struct timeval _timestamp;
+
     esp_err_t res;
     size_t *_jpg_buf_len;
     uint8_t **_jpg_buf;
-    char *part_buf[128];
     int64_t last_frame;
 };

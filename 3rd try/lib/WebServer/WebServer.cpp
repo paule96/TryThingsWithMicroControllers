@@ -31,16 +31,20 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     Frame frame = camera.GetCameraStream();
     Serial.printf("Frame length: %x", frame._jpg_buf_len);
     Serial.println();
+    char* part_buf[128];
+    size_t hlen = snprintf((char *)part_buf, 128, _STREAM_PART, frame._jpg_buf_len, camera._timestamp.tv_sec, camera._timestamp.tv_usec);
     size_t maxBufferRead;
-    if(maxLen > frame._jpg_buf_len){
-      maxBufferRead = frame._jpg_buf_len;
+    if(maxLen > (frame._jpg_buf_len + hlen)){
+      maxBufferRead = (frame._jpg_buf_len + hlen);
     }else{
       maxBufferRead = maxLen;
     }
-    memcpy(buffer, &frame._jpg_buf,maxBufferRead);
+    memcpy(buffer, &part_buf, hlen);
+    memcpy(buffer, &frame._jpg_buf,maxBufferRead-hlen);
     return maxBufferRead; });
   response->addHeader("Access-Control-Allow-Origin", "*");
   response->addHeader("X-Framerate", "60");
+
   request->send(response);
 }
 
