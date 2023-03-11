@@ -187,11 +187,10 @@ Frame& GetCameraStream()
         }
         else
         {
-            _jpg_buf_len = fb->len;
-            _jpg_buf = fb->buf;
+            frame._jpg_buf_len = fb->len;
+            frame._jpg_buf = fb->buf;
         }
     }
-    memcpy(_jpg_buf, &frame._jpg_buf, _jpg_buf_len);
     return frame;
     // return test;
 }

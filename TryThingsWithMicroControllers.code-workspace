@@ -55,7 +55,12 @@
 	},
 	"settings": {
 		"files.associations": {
-			"array": "cpp"
+			"array": "cpp",
+			"atomic": "cpp",
+			"*.tcc": "cpp",
+			"fstream": "cpp",
+			"sstream": "cpp",
+			"regex": "cpp"
 		}
 
 	},
