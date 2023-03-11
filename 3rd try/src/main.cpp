@@ -52,7 +52,7 @@ httpd_handle_t stream_httpd = NULL;
  */
 static const char *TAG = "camera_httpd";
 
-char* readFile(char* path)
+File readFile(char* path)
 {
   File myFile = SD_MMC.open(path, FILE_READ);
   if (!myFile)
@@ -62,17 +62,9 @@ char* readFile(char* path)
   }
   else
   {
-    size_t size = myFile.size();
-    char charResult[size];
-    String result;
-    while (myFile.available())
-    {
-      result = myFile.readString();
-    }
-    result.toCharArray(charResult, sizeof(charResult));
-    return charResult;
+    return myFile;
   }
-  char *test;
+  File test;
   return test;
 }
 
@@ -92,7 +84,7 @@ void setupCameraPins()
   config.pin_pclk = PCLK_GPIO_NUM;
   config.pin_vsync = VSYNC_GPIO_NUM;
   config.pin_href = HREF_GPIO_NUM;
-  config.pin_sccb_sda = SIOD_GPIO_NUM;
+  config.pin_sscb_sda = SIOD_GPIO_NUM;
   config.pin_sccb_scl = SIOC_GPIO_NUM;
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
@@ -161,20 +153,20 @@ static esp_err_t index_handler(httpd_req_t *req)
   sensor_t *s = esp_camera_sensor_get();
   if (s != NULL)
   {
-    char *fileContent;
+    File fileContent;
     if (s->id.PID == OV3660_PID)
     {
-      fileContent = readFile("index_ov3660.html");
+      fileContent = readFile("/index_ov3660.html");
     }
     else if (s->id.PID == OV5640_PID)
     {
-      fileContent = readFile("index_ov5640.html");
+      fileContent = readFile("/index_ov5640.html");
     }
     else
     {
-      fileContent = readFile("index_ov2640.html");
+      fileContent = readFile("/index_ov2640.html");
     }
-    return httpd_resp_send(req, fileContent, sizeof(fileContent));
+    return httpd_resp_send(req, fileContent.read(), fileContent.size());
   }
   else
   {
@@ -368,7 +360,7 @@ void setup()
 
   Serial.print("Setup camera.");
   Serial.println();
-
+  setupCamera();
   Serial.print("try to connect to wifi.");
   Serial.println();
   WiFi.begin(ssid, password);
@@ -380,9 +372,9 @@ void setup()
   }
   Serial.println();
   Serial.println("wifi connected");
-  // TODO: start the camera server here
-
-  Serial.printf("Camera ready! Use 'http://%x to connect", WiFi.localIP());
+  
+  startCameraServer();
+  Serial.printf("Camera ready! Use 'http://%x to connect", WiFi.localIP().toString());
   Serial.println();
 }
 
