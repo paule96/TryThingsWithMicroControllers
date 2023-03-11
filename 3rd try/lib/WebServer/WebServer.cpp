@@ -46,10 +46,13 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
 
     Serial.println("Write boundry");
     memcpy(buffer, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
+    buffer += strlen(_STREAM_BOUNDARY);
     Serial.println("Write part header");
     memcpy(buffer, &part_buf, hlen);
+    buffer += hlen;
     Serial.println("Write jpeg");
     memcpy(buffer, &frame._jpg_buf,frame._jpg_buf_len);
+    buffer += frame._jpg_buf_len;
     Serial.println("finish response");
     return maxBufferRead; });
   response->addHeader("Access-Control-Allow-Origin", "*");
