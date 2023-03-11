@@ -27,7 +27,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
   //You will be asked for more data until 0 is returned
   //Keep in mind that you can not delay or yield waiting for more data!
   Serial.printf("Starting stream frame. Max length: %x, ", maxLen);
-    Frame frame = GetCameraStream();
+    Frame& frame = GetCameraStream();
     Serial.printf("Frame length: %x", frame._jpg_buf_len);
     Serial.println();
     size_t maxBufferRead;

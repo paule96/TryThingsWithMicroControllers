@@ -29,13 +29,13 @@ static const char *TAG = "camera";
 #define PCLK_GPIO_NUM 13
 #pragma endregion camera_pins
 
-Frame::Frame(size_t jpg_buf_len, uint8_t *jpg_buf)
-{
-    Serial.printf("Buffer length of frame is: %x", jpg_buf_len);
-    Serial.println();
-    Frame::_jpg_buf_len = _jpg_buf_len;
-    Frame::_jpg_buf = _jpg_buf;
-}
+// Frame::Frame(const size_t &jpg_buf_len, uint8_t *jpg_buf)
+// {
+//     Serial.printf("Buffer length of frame is: %x", jpg_buf_len);
+//     Serial.println();
+//     Frame::_jpg_buf_len = _jpg_buf_len;
+//     Frame::_jpg_buf = _jpg_buf;
+// }
 
 /**
  * @brief creates a config object, wich sets all the important, settings to find and interact with the camera
@@ -146,8 +146,9 @@ uint8_t *_jpg_buf = NULL;
 char *part_buf[128];
 static int64_t last_frame = 0;
 
-Frame GetCameraStream()
+Frame& GetCameraStream()
 {
+    Frame frame;
     if (fb)
     {
         esp_camera_fb_return(fb);
@@ -190,5 +191,7 @@ Frame GetCameraStream()
             _jpg_buf = fb->buf;
         }
     }
-    return Frame(_jpg_buf_len, _jpg_buf);
+    memcpy(_jpg_buf, &frame._jpg_buf, _jpg_buf_len);
+    return frame;
+    // return test;
 }
