@@ -12,10 +12,6 @@
 		{
 			"name": "root",
 			"path": "./"
-		},
-		{
-			"name": "3rd try",
-			"path": "3rd try"
 		}
 	],
 	"launch": {

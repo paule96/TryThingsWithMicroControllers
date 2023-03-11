@@ -31,8 +31,8 @@
 // TODO: should be somehow typed in by the user.
 //  That would be much safer. And the device should forget about it
 //  after a reboot boot.
-const char *ssid = "someting";
-const char *password = "something";
+const char *ssid = "Zuhause ist werbefreie zone";
+const char *password = "hier koennte ihre werbung stehen";
 #pragma endregion wlan_config
 
 camera_config_t config;
@@ -51,41 +51,28 @@ httpd_handle_t stream_httpd = NULL;
  */
 static const char *TAG = "camera_httpd";
 
-void setup()
+char *readFile(char *path)
 {
-  Serial.begin(115200);
-  Serial.setDebugOutput(true);
-  Serial.println();
-  Serial.println("init SD");
-  if (!SD.begin(10)) {
-      Serial.println("initialization failed!");
-      while (1);
-  }
-
-  Serial.print("Setup camera.");
-  Serial.println();
-
-  Serial.print("try to connect to wifi.");
-  Serial.println();
-  WiFi.begin(ssid, password);
-  WiFi.setSleep(false);
-  while (WiFi.status() != WL_CONNECTED)
+  File myFile = SD.open(path, FILE_READ);
+  if (!myFile)
   {
-    delay(500);
-    Serial.print(".");
+    Serial.printf("error opening %x", path);
+    Serial.println();
   }
-  Serial.println();
-  Serial.println("wifi connected");
-  // TODO: start the camera server here
-
-  Serial.printf("Camera ready! Use 'http://%x to connect", WiFi.localIP());
-  Serial.println();
-}
-
-void loop()
-{
-  // the main loop is the camera server. So we just set this CPU task to delay as long as he can.
-  delay(100000);
+  else
+  {
+    size_t size = myFile.size();
+    char charResult[size];
+    String result;
+    while (myFile.available())
+    {
+      result = myFile.readString();
+    }
+    result.toCharArray(charResult, sizeof(charResult));
+    return charResult;
+  }
+  char* test;
+  return test;
 }
 
 void setupCameraPins()
@@ -162,6 +149,107 @@ void setupWifi()
   // TODO: find out how we can show IPV4 and if it's there then IPV6 information
   //  IPAddress localV4Ip = WiFi.localIP();
   //  IPv6Address localV6Ip = WiFi.localIPv6();
+}
+
+static esp_err_t index_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>Hello world</h1><body></html>";
+  httpd_resp_set_type(req, "text/html");
+  httpd_resp_set_hdr(req, "Content-Encoding", "gzip");
+  sensor_t *s = esp_camera_sensor_get();
+  if (s != NULL)
+  {
+    char *fileContent;
+    if (s->id.PID == OV3660_PID)
+    {
+      fileContent = readFile("index_ov3660.html");
+    }
+    else if (s->id.PID == OV5640_PID)
+    {
+      fileContent = readFile("index_ov5640.html");
+    }
+    else
+    {
+      fileContent = readFile("index_ov2640.html");
+    }
+    return httpd_resp_send(req, fileContent, sizeof(fileContent));
+  }
+  else
+  {
+    ESP_LOGE(TAG, "Camera sensor not found");
+    return httpd_resp_send_500(req);
+  }
+}
+
+static esp_err_t status_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>status</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t cmd_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>control</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t capture_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>capture</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t stream_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>stream</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t bmp_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>bmp</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t xclk_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>xclk</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t reg_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>reg</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t greg_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>greg</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t pll_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>pll</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
+}
+
+static esp_err_t win_handler(httpd_req_t *req)
+{
+  httpd_resp_set_type(req, "text/html");
+  const char *response = "<!DOCTYPE html><html><body><h1>win</h1><body></html>";
+  return httpd_resp_send(req, response, sizeof(response));
 }
 
 void startCameraServer()
@@ -256,123 +344,42 @@ void startCameraServer()
   }
 }
 
-static esp_err_t index_handler(httpd_req_t *req)
+void setup()
 {
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>Hello world</h1><body></html>";
-  httpd_resp_set_type(req, "text/html");
-  httpd_resp_set_hdr(req, "Content-Encoding", "gzip");
-  sensor_t *s = esp_camera_sensor_get();
-  if (s != NULL)
+  Serial.begin(115200);
+  Serial.setDebugOutput(true);
+  Serial.println();
+  Serial.println("init SD");
+  if (!SD.begin(5))
   {
-    char* fileContent;
-    if (s->id.PID == OV3660_PID)
-    {
-      fileContent = readFile("index_ov3660.html");
-    }
-    else if (s->id.PID == OV5640_PID)
-    {
-      fileContent = readFile("index_ov5640.html");
-    }
-    else
-    {
-      fileContent = readFile("index_ov2640.html");
-    }
-    return httpd_resp_send(req, fileContent, sizeof(fileContent));
+    Serial.println("initialization failed!");
+    while (1)
+      ;
   }
-  else
+
+  Serial.print("Setup camera.");
+  Serial.println();
+
+  Serial.print("try to connect to wifi.");
+  Serial.println();
+  WiFi.begin(ssid, password);
+  WiFi.setSleep(false);
+  while (WiFi.status() != WL_CONNECTED)
   {
-    ESP_LOGE(TAG, "Camera sensor not found");
-    return httpd_resp_send_500(req);
+    delay(500);
+    Serial.print(".");
   }
+  Serial.println();
+  Serial.println("wifi connected");
+  // TODO: start the camera server here
+
+  Serial.printf("Camera ready! Use 'http://%x to connect", WiFi.localIP());
+  Serial.println();
 }
 
-static esp_err_t status_handler(httpd_req_t *req)
+void loop()
 {
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>status</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
+  // the main loop is the camera server. So we just set this CPU task to delay as long as he can.
+  delay(100000);
 }
 
-static esp_err_t cmd_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>control</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-static esp_err_t capture_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>capture</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-static esp_err_t stream_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>stream</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-static esp_err_t bmp_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>bmp</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-static esp_err_t xclk_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>xclk</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-static esp_err_t reg_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>reg</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-static esp_err_t greg_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>greg</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-static esp_err_t pll_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>pll</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-static esp_err_t win_handler(httpd_req_t *req)
-{
-  httpd_resp_set_type(req, "text/html");
-  const char *response = "<!DOCTYPE html><html><body><h1>win</h1><body></html>";
-  return httpd_resp_send(req, response, sizeof(response));
-}
-
-char *readFile(char *path)
-{
-  File myFile = SD.open(path, FILE_READ);
-  if (!myFile)
-  {
-    Serial.printf("error opening %x", path);
-    Serial.println();
-    return;
-  }
-  size_t size = myFile.size();
-  char charResult[size];
-  String result;
-  while (myFile.available())
-  {
-    result = myFile.readString();
-  }
-  result.toCharArray(charResult, sizeof(charResult));
-  return charResult;
-}
