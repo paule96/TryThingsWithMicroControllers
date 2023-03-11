@@ -30,6 +30,8 @@ static const char *TAG = "camera";
 #pragma endregion camera_pins
 
 Frame::Frame(size_t jpg_buf_len, uint8_t *jpg_buf){
+    Serial.printf("Buffer length of frame is: %x", jpg_buf_len);
+    Serial.println();
     Frame::_jpg_buf_len = _jpg_buf_len;
     Frame::_jpg_buf = _jpg_buf;
 }
