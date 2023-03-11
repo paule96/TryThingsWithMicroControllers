@@ -2,6 +2,7 @@
 #include "esp_camera.h"
 #include "WiFi.h"
 #include "http_server.h"
+#include "SD_MMC.h"
 #include "SD.h"
 #include "SPI.h"
 
@@ -51,9 +52,9 @@ httpd_handle_t stream_httpd = NULL;
  */
 static const char *TAG = "camera_httpd";
 
-char *readFile(char *path)
+char* readFile(char* path)
 {
-  File myFile = SD.open(path, FILE_READ);
+  File myFile = SD_MMC.open(path, FILE_READ);
   if (!myFile)
   {
     Serial.printf("error opening %x", path);
@@ -71,7 +72,7 @@ char *readFile(char *path)
     result.toCharArray(charResult, sizeof(charResult));
     return charResult;
   }
-  char* test;
+  char *test;
   return test;
 }
 
@@ -91,7 +92,7 @@ void setupCameraPins()
   config.pin_pclk = PCLK_GPIO_NUM;
   config.pin_vsync = VSYNC_GPIO_NUM;
   config.pin_href = HREF_GPIO_NUM;
-  config.pin_sscb_sda = SIOD_GPIO_NUM;
+  config.pin_sccb_sda = SIOD_GPIO_NUM;
   config.pin_sccb_scl = SIOC_GPIO_NUM;
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
@@ -350,12 +351,20 @@ void setup()
   Serial.setDebugOutput(true);
   Serial.println();
   Serial.println("init SD");
-  if (!SD.begin(5))
+  SD_MMC.setPins(39, 38, 40);
+  if (!SD_MMC.begin("/sdcard", true, true, SDMMC_FREQ_DEFAULT, 5))
   {
     Serial.println("initialization failed!");
-    while (1)
-      ;
+    return;
   }
+  uint8_t cardType = SD_MMC.cardType();
+  if (cardType == CARD_NONE)
+  {
+    Serial.println("No SD_MMC card attached");
+    return;
+  }
+  uint64_t cardSize = SD_MMC.cardSize() / (1024 * 1024);
+  Serial.printf("SD_MMC Card Size: %lluMB\n", cardSize);
 
   Serial.print("Setup camera.");
   Serial.println();
@@ -382,4 +391,3 @@ void loop()
   // the main loop is the camera server. So we just set this CPU task to delay as long as he can.
   delay(100000);
 }
-
