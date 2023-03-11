@@ -38,6 +38,9 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     }
     memcpy(buffer, &frame._jpg_buf,maxBufferRead);
     return maxBufferRead; });
+  response->addHeader("Access-Control-Allow-Origin", "*");
+  response->addHeader("X-Framerate", "60");
+  request->send(response);
 }
 
 /**
