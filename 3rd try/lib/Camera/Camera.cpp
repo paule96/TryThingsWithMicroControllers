@@ -29,7 +29,8 @@ static const char *TAG = "camera";
 #define PCLK_GPIO_NUM 13
 #pragma endregion camera_pins
 
-Frame::Frame(size_t jpg_buf_len, uint8_t *jpg_buf){
+Frame::Frame(size_t jpg_buf_len, uint8_t *jpg_buf)
+{
     Serial.printf("Buffer length of frame is: %x", jpg_buf_len);
     Serial.println();
     Frame::_jpg_buf_len = _jpg_buf_len;
@@ -138,15 +139,15 @@ char *GetCameraUi()
 }
 
 camera_fb_t *fb = NULL;
+struct timeval _timestamp;
+esp_err_t res = ESP_OK;
+size_t _jpg_buf_len = 0;
+uint8_t *_jpg_buf = NULL;
+char *part_buf[128];
+static int64_t last_frame = 0;
 
 Frame GetCameraStream()
 {
-    struct timeval _timestamp;
-    esp_err_t res = ESP_OK;
-    size_t _jpg_buf_len = 0;
-    uint8_t *_jpg_buf = NULL;
-    char *part_buf[128];
-    static int64_t last_frame = 0;
     if (fb)
     {
         esp_camera_fb_return(fb);
