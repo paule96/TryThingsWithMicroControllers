@@ -41,7 +41,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     if(maxLen > size){
       maxBufferRead = size;
     }else{
-      maxBufferRead = size;
+      maxBufferRead = maxLen;
     }
 
     memcpy(buffer, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
