@@ -41,6 +41,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     }
     Serial.println(_STREAM_BOUNDARY);
     Serial.println(_STREAM_PART);
+    Serial.printf(_STREAM_PART, frame._jpg_buf_len, camera._timestamp.tv_sec, camera._timestamp.tv_usec);
     memcpy(buffer, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
     memcpy(buffer, &part_buf, hlen);
     memcpy(buffer, &frame._jpg_buf,maxBufferRead-hlen);
