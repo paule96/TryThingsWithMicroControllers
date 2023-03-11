@@ -36,7 +36,6 @@ void setup()
   Serial.setDebugOutput(true);
   Serial.println();
   InitSdCard();
-  SetupCamera();
   Serial.print("try to connect to wifi.");
   Serial.println();
   WiFi.begin(ssid, password);

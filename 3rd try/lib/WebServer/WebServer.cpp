@@ -10,6 +10,7 @@ static const char *TAG = "camera_httpd";
 
 /// @brief The webserver that will be hosted to communicate with the camera
 AsyncWebServer server(80);
+Camera camera;
 
 #define PART_BOUNDARY "123456789000000000000987654321"
 static const char *_STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
@@ -27,7 +28,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
   //You will be asked for more data until 0 is returned
   //Keep in mind that you can not delay or yield waiting for more data!
   Serial.printf("Starting stream frame. Max length: %x, ", maxLen);
-    Frame& frame = GetCameraStream();
+    Frame& frame = camera.GetCameraStream();
     Serial.printf("Frame length: %x", frame._jpg_buf_len);
     Serial.println();
     size_t maxBufferRead;
@@ -52,8 +53,13 @@ void StartCameraServer()
 
   filesystem = GetCurrentMount();
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(filesystem, GetCameraUi(), "text/html"); });
+            { request->send(filesystem, camera.GetCameraUi(), "text/html"); });
   server.on("/stream", HTTP_GET, StreamCameraFeed);
   server.begin();
   ESP_LOGI(TAG, "Starting stream server on port: '80'");
+}
+
+void StopCameraServer(){
+  camera.~Camera();
+  server.~AsyncWebServer();
 }

@@ -37,11 +37,27 @@ static const char *TAG = "camera";
 //     Frame::_jpg_buf = _jpg_buf;
 // }
 
+Camera::Camera(){
+    Camera::SetupCamera();
+}
+
+Camera::~Camera(){
+    if (Camera::fb)
+    {
+        Serial.println("clean frame buffer.");
+        esp_camera_fb_return(Camera::fb);
+        Camera::fb = NULL;
+    }
+    if(Camera::_jpg_buf){
+        free(Camera::_jpg_buf);
+    }
+}
+
 /**
  * @brief creates a config object, wich sets all the important, settings to find and interact with the camera
  * This method is private
  */
-camera_config_t setupCameraPins()
+camera_config_t Camera::setupCameraPins()
 {
     camera_config_t config;
     config.ledc_channel = LEDC_CHANNEL_0;
@@ -88,10 +104,15 @@ camera_config_t setupCameraPins()
 /**
  * @brief Inits the camera, so it's ready to use after this function
  */
-void SetupCamera()
+void Camera::SetupCamera()
 {
     Serial.print("Setup camera.");
     Serial.println();
+    Camera::fb = NULL;
+    Camera::res = ESP_OK;
+    Camera::_jpg_buf_len = 0;
+    Camera::_jpg_buf = NULL;
+    Camera::last_frame = 0;
     camera_config_t config = setupCameraPins();
     esp_err_t err = esp_camera_init(&config);
     if (err != ESP_OK)
@@ -111,7 +132,7 @@ void SetupCamera()
  * @return the path to the UI. If the camera can't be found,
  * an error is logged and null is the return
  */
-char *GetCameraUi()
+char *Camera::GetCameraUi()
 {
     sensor_t *s = esp_camera_sensor_get();
     if (s != NULL)
@@ -138,58 +159,50 @@ char *GetCameraUi()
     return NULL;
 }
 
-camera_fb_t *fb = NULL;
-struct timeval _timestamp;
-esp_err_t res = ESP_OK;
-size_t _jpg_buf_len = 0;
-uint8_t *_jpg_buf = NULL;
-char *part_buf[128];
-static int64_t last_frame = 0;
-
-Frame& GetCameraStream()
+Frame &Camera::GetCameraStream()
 {
     Frame frame = Frame();
-    if (fb)
+    if (Camera::fb)
     {
         Serial.println("clean frame buffer.");
-        esp_camera_fb_return(fb);
-        fb = NULL;
-        _jpg_buf = NULL;
+        esp_camera_fb_return(Camera::fb);
+        Camera::fb = NULL;
+        Camera::_jpg_buf = NULL;
     }
-    if (!last_frame)
+    if (!Camera::last_frame)
     {
-        last_frame = esp_timer_get_time();
+        Camera::last_frame = esp_timer_get_time();
     }
     Serial.println("get frame.");
-    fb = esp_camera_fb_get();
-    if (!fb)
+    Camera::fb = esp_camera_fb_get();
+    if (!Camera::fb)
     {
         Serial.println("failed.");
         ESP_LOGE(TAG, "Camera capture failed");
-        res = ESP_FAIL;
+        Camera::res = ESP_FAIL;
     }
     else
     {
-        _timestamp.tv_sec = fb->timestamp.tv_sec;
-        _timestamp.tv_usec = fb->timestamp.tv_usec;
-        if (fb->format != PIXFORMAT_JPEG)
+        Camera::_timestamp.tv_sec = Camera::fb->timestamp.tv_sec;
+        Camera::_timestamp.tv_usec = Camera::fb->timestamp.tv_usec;
+        if (Camera::fb->format != PIXFORMAT_JPEG)
         {
             Serial.println("Try to convert to jpeg.");
-            bool jpeg_converted = frame2jpg(fb, 80, &_jpg_buf, &_jpg_buf_len);
-            esp_camera_fb_return(fb);
-            fb = NULL;
+            bool jpeg_converted = frame2jpg(Camera::fb, 80, Camera::_jpg_buf, Camera::_jpg_buf_len);
+            esp_camera_fb_return(Camera::fb);
+            Camera::fb = NULL;
             if (!jpeg_converted)
             {
                 Serial.println("failed.");
                 ESP_LOGE(TAG, "JPEG compression failed");
-                res = ESP_FAIL;
+                Camera::res = ESP_FAIL;
             }
         }
         else
         {
             Serial.println("save frame.");
-            frame._jpg_buf_len = fb->len;
-            frame._jpg_buf = fb->buf;
+            frame._jpg_buf_len = Camera::fb->len;
+            frame._jpg_buf = Camera::fb->buf;
         }
     }
     Serial.println("return frame.");
