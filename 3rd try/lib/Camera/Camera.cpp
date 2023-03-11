@@ -151,22 +151,20 @@ Frame& GetCameraStream()
     Frame frame = Frame();
     if (fb)
     {
+        Serial.println("clean frame buffer.");
         esp_camera_fb_return(fb);
         fb = NULL;
-        _jpg_buf = NULL;
-    }
-    else if (_jpg_buf)
-    {
-        free(_jpg_buf);
         _jpg_buf = NULL;
     }
     if (!last_frame)
     {
         last_frame = esp_timer_get_time();
     }
+    Serial.println("get frame.");
     fb = esp_camera_fb_get();
     if (!fb)
     {
+        Serial.println("failed.");
         ESP_LOGE(TAG, "Camera capture failed");
         res = ESP_FAIL;
     }
@@ -176,21 +174,25 @@ Frame& GetCameraStream()
         _timestamp.tv_usec = fb->timestamp.tv_usec;
         if (fb->format != PIXFORMAT_JPEG)
         {
+            Serial.println("Try to convert to jpeg.");
             bool jpeg_converted = frame2jpg(fb, 80, &_jpg_buf, &_jpg_buf_len);
             esp_camera_fb_return(fb);
             fb = NULL;
             if (!jpeg_converted)
             {
+                Serial.println("failed.");
                 ESP_LOGE(TAG, "JPEG compression failed");
                 res = ESP_FAIL;
             }
         }
         else
         {
+            Serial.println("save frame.");
             frame._jpg_buf_len = fb->len;
             frame._jpg_buf = fb->buf;
         }
     }
+    Serial.println("return frame.");
     return frame;
     // return test;
 }
