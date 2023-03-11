@@ -10,6 +10,14 @@ First you need to setup the project. Go to an empty folder and run the following
 
 This will setup a project for the `Espressif ESP32-S3`. The development framework that is used is `Espressif IoT Development Framework`.
 
+If you want a faster setup you can create a project with the ardoino framework:
+
+```bash
+/home/vscode/.platformio/penv/bin/pio project init -b esp32-s3-devkitc-1 --ide vscode --project-option
+```
+
+GPIO 2 = small blue LED
+GPIO 48 = big white LED
 
 ## Freenove_Ultimate_Starter_Kit_for_ESP32_S3
 
@@ -27,7 +35,7 @@ Freenove ESP32-S3 Board can be uploaded code using Arduino® IDE.
 
 ### Download
 
-Click the green "Code" button, then click "Download ZIP" button in the pop-up window.  
+Click the green "Code" button, then click "Download ZIP" button in the pop-up window.
 Do NOT click the "Open in Desktop" button, it will lead you to install Github software.
 
 > If you meet any difficulties, please contact our technical team for help.
@@ -93,7 +101,7 @@ Freenove® brand and logo are trademarks of Freenove Creative Technology Co., Lt
 
 Other registered trademarks and their owners appearing in this repository:
 
-Arduino® is a trademark of Arduino LLC (https://www.arduino.cc/).  
-Raspberry Pi® is a trademark of Raspberry Pi Foundation (https://www.raspberrypi.org/).  
-micro:bit® is a trademark of Micro:bit Educational Foundation (https://www.microbit.org/).  
+Arduino® is a trademark of Arduino LLC (https://www.arduino.cc/).
+Raspberry Pi® is a trademark of Raspberry Pi Foundation (https://www.raspberrypi.org/).
+micro:bit® is a trademark of Micro:bit Educational Foundation (https://www.microbit.org/).
 Espressif® is a trademark of Espressif Systems (Shanghai) Co.Ltd (https://www.espressif.com/).
