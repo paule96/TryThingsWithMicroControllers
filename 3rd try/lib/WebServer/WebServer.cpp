@@ -10,7 +10,7 @@ static const char *TAG = "camera_httpd";
 
 /// @brief The webserver that will be hosted to communicate with the camera
 AsyncWebServer server(80);
-Camera camera;
+Camera camera();
 
 #define PART_BOUNDARY "123456789000000000000987654321"
 static const char *_STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
