@@ -34,17 +34,20 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     char* part_buf[128];
     size_t hlen = snprintf((char *)part_buf, 128, _STREAM_PART, frame._jpg_buf_len, camera._timestamp.tv_sec, camera._timestamp.tv_usec);
     size_t maxBufferRead;
-    if(maxLen > (frame._jpg_buf_len + hlen)){
-      maxBufferRead = (frame._jpg_buf_len + hlen);
-    }else{
-      maxBufferRead = maxLen;
-    }
+    size_t size = frame._jpg_buf_len + hlen + strlen(_STREAM_BOUNDARY);
     Serial.println(_STREAM_BOUNDARY);
     Serial.println(_STREAM_PART);
     Serial.printf(_STREAM_PART, frame._jpg_buf_len, camera._timestamp.tv_sec, camera._timestamp.tv_usec);
+    if(maxLen > size){
+      maxBufferRead = size;
+    }else{
+      maxBufferRead = size;
+    }
+
     memcpy(buffer, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
     memcpy(buffer, &part_buf, hlen);
-    memcpy(buffer, &frame._jpg_buf,maxBufferRead-hlen);
+    memcpy(buffer, &frame._jpg_buf,frame._jpg_buf_len);
+
     return maxBufferRead; });
   response->addHeader("Access-Control-Allow-Origin", "*");
   response->addHeader("X-Framerate", "60");
@@ -68,7 +71,8 @@ void StartCameraServer()
   ESP_LOGI(TAG, "Starting stream server on port: '80'");
 }
 
-void StopCameraServer(){
+void StopCameraServer()
+{
   camera.~Camera();
   server.~AsyncWebServer();
 }
