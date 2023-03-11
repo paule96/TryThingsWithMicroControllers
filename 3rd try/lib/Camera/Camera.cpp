@@ -38,7 +38,11 @@ static const char *TAG = "camera";
 // }
 
 Camera::Camera(){
-    Camera::SetupCamera();
+    Camera::fb = NULL;
+    Camera::res = ESP_OK;
+    Camera::_jpg_buf_len = 0;
+    Camera::_jpg_buf = NULL;
+    Camera::last_frame = 0;
 }
 
 Camera::~Camera(){
@@ -108,11 +112,7 @@ void Camera::SetupCamera()
 {
     Serial.print("Setup camera.");
     Serial.println();
-    Camera::fb = NULL;
-    Camera::res = ESP_OK;
-    Camera::_jpg_buf_len = 0;
-    Camera::_jpg_buf = NULL;
-    Camera::last_frame = 0;
+
     camera_config_t config = setupCameraPins();
     esp_err_t err = esp_camera_init(&config);
     if (err != ESP_OK)
