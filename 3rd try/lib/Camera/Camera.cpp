@@ -120,7 +120,7 @@ void Camera::SetupCamera()
     }
     // optimize now the output of the sensor a bit
     sensor_t *s = esp_camera_sensor_get();
-    s->set_vflip(s, 1);       // inital configuration is, that the camera is flipped. We flip it back here
+    s->set_vflip(s, 0);       // inital configuration is, that the camera is flipped. We flip it back here
     s->set_brightness(s, 1);  // initial configuration is to dark
     s->set_saturation(s, -1); // initial configuration is too saturated. so we reduce it.
 }
