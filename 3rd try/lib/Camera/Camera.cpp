@@ -157,6 +157,17 @@ String Camera::GetCameraUi()
     return String();
 }
 
+/// @brief Resets a frame object and free the memory for it
+/// @param frame The frame that should be resetted
+void Camera::ResetFrame(Frame frame){
+    if(frame.buffer){
+        free(frame.buffer);
+    }
+    frame.buffer = NULL;
+    frame.length = 0;
+    frame.index = 0;
+}
+
 /// @brief If the method get's called it returns a single frame as jpg.
 /// That can be used for a stream like behavior
 /// @return A single frame, as jpg
@@ -202,6 +213,7 @@ Frame Camera::GetCameraStream()
         Serial.println("save frame.");
         frame.length = Camera::fb->len;
         frame.buffer = Camera::fb->buf;
+        frame.index = 0;
     }
     Serial.println("return frame.");
     return frame;

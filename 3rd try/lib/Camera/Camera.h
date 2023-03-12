@@ -3,6 +3,8 @@ struct Frame
 {
     /// @brief the length of the buffer
     size_t length = 0;
+    /// @brief The index where we should read the next values from the buffer
+    size_t index = 0;
     /// @brief buffer for the jpg frame
     uint8_t *buffer = NULL;
     /// @brief the timestamp of the frame
@@ -17,6 +19,7 @@ public:
     void SetupCamera();
     String GetCameraUi();
     Frame GetCameraStream();
+    void ResetFrame(Frame frame);
 private:
     camera_config_t setupCameraPins();
     camera_fb_t *fb;
