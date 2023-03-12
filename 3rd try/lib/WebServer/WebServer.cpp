@@ -61,7 +61,7 @@ public:
   {
     Serial.printf("Starting stream frame. Max length: %u, ", maxLen);
 
-    if (!frame.buffer || frame.index == frame.length)
+    if (!frame.buffer || frame.index >= frame.length)
     {
       // cleanup old frame and load a new frame here
       camera.ResetFrame(frame);
@@ -73,7 +73,7 @@ public:
     size_t size = 0;
 
     // always remember: memcpy don't moves the cursor, so this is always a two liner
-    if (index)
+    if (index == 0)
     {
       // write the boundry at the beginning of the request
       Serial.println("Write boundry");
@@ -84,7 +84,7 @@ public:
       buffer += blen;
     }
 
-    if (frame.index)
+    if (frame.index == 0)
     {
       // only write a part header if the part starts
       Serial.println("Write part header");
@@ -106,6 +106,7 @@ public:
     frame.index += maxBodyLenght;
     // the buffer cursor shouldn't be moved here
     Serial.printf("finish response with a size of: %u", maxLen);
+    index += maxLen;
     Serial.println();
     return maxLen;
   }
