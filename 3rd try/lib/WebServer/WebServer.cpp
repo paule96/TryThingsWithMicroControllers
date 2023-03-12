@@ -55,6 +55,8 @@ public:
   {
     camera.ResetFrame(frame);
   }
+  bool _sourceValid() const { return true; }
+
   virtual size_t _fillBuffer(uint8_t *buffer, size_t maxLen)
   {
     Serial.printf("Starting stream frame. Max length: %u, ", maxLen);
