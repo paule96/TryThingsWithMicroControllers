@@ -59,7 +59,7 @@ public:
 
   virtual size_t _fillBuffer(uint8_t *buffer, size_t maxLen)
   {
-    Serial.printf("Starting stream frame. Max length: %u, ", maxLen);
+    // Serial.printf("Starting stream frame. Max length: %u, ", maxLen);
 
     if (!frame.buffer || frame.index >= frame.length)
     {
@@ -68,7 +68,7 @@ public:
       frame = camera.GetCameraStream();
     }
 
-    Serial.printf("Frame length: %u, And the index is at: %u", frame.length, frame.index);
+    // Serial.printf("Frame length: %u, And the index is at: %u", frame.length, frame.index);
     Serial.println();
     size_t size = 0;
 
@@ -76,8 +76,8 @@ public:
     if (frame.index == 0)
     {
       // write the boundry at the beginning of the request
-      Serial.println("Write boundry");
-      Serial.println(_STREAM_BOUNDARY);
+      // Serial.println("Write boundry");
+      // Serial.println(_STREAM_BOUNDARY);
       size_t blen = strlen(_STREAM_BOUNDARY);
       memcpy(buffer, _STREAM_BOUNDARY, blen);
       size += blen;
@@ -87,8 +87,8 @@ public:
     if (frame.index == 0)
     {
       // only write a part header if the part starts
-      Serial.println("Write part header");
-      Serial.printf(_STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
+      // Serial.println("Write part header");
+      // Serial.printf(_STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
       size_t hlen = sprintf((char *)buffer, _STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
       buffer += hlen;
       size += hlen;
@@ -101,11 +101,11 @@ public:
       maxLen -= maxBodyLenght - (frame.length - frame.index);
       maxBodyLenght = (frame.length - frame.index);
     }
-    Serial.println("Write jpeg");
+    // Serial.println("Write jpeg");
     memcpy(buffer, frame.buffer + frame.index, maxBodyLenght);
     frame.index += maxBodyLenght;
     // the buffer cursor shouldn't be moved here
-    Serial.printf("finish response with a size of: %u", maxLen);
+    // Serial.printf("finish response with a size of: %u", maxLen);
     index += maxLen;
     Serial.println();
     return maxLen;
@@ -122,7 +122,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
   response->addHeader("Access-Control-Allow-Origin", "*");
   // a header to define the max framerate
   response->addHeader("X-Framerate", "60");
-  Serial.println("Now start sending the request.");
+  // Serial.println("Now start sending the request.");
   // answer the request
   request->send(response);
 }

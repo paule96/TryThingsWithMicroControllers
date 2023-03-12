@@ -90,7 +90,7 @@ camera_config_t Camera::setupCameraPins()
         config.frame_size = FRAMESIZE_UXGA;
         config.grab_mode = CAMERA_GRAB_LATEST;
         config.fb_location = CAMERA_FB_IN_PSRAM;
-        config.jpeg_quality = 10;
+        config.jpeg_quality = 1;
         config.fb_count = 2;
     }
     else
@@ -174,7 +174,7 @@ Frame Camera::GetCameraStream()
     Frame frame = Frame();
     if (Camera::fb)
     {
-        Serial.println("clean frame buffer.");
+        // Serial.println("clean frame buffer.");
         esp_camera_fb_return(Camera::fb);
         Camera::fb = NULL;
         Camera::_jpg_buf = NULL;
@@ -183,7 +183,7 @@ Frame Camera::GetCameraStream()
     {
         Camera::last_frame = esp_timer_get_time();
     }
-    Serial.println("get frame.");
+    // Serial.println("get frame.");
     Camera::fb = esp_camera_fb_get();
     if (!Camera::fb)
     {
@@ -197,7 +197,7 @@ Frame Camera::GetCameraStream()
         frame.timestamp.tv_usec = Camera::fb->timestamp.tv_usec;
         if (Camera::fb->format != PIXFORMAT_JPEG)
         {
-            Serial.println("Try to convert to jpeg.");
+            // Serial.println("Try to convert to jpeg.");
             bool jpeg_converted = frame2jpg(Camera::fb, 80, Camera::_jpg_buf, Camera::_jpg_buf_len);
             esp_camera_fb_return(Camera::fb);
             Camera::fb = NULL;
@@ -208,11 +208,11 @@ Frame Camera::GetCameraStream()
                 Camera::res = ESP_FAIL;
             }
         }
-        Serial.println("save frame.");
+        // Serial.println("save frame.");
         frame.length = Camera::fb->len;
         frame.buffer = Camera::fb->buf;
         frame.index = 0;
     }
-    Serial.println("return frame.");
+    // Serial.println("return frame.");
     return frame;
 }
