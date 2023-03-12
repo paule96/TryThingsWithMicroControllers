@@ -161,18 +161,6 @@ String Camera::GetCameraUi()
 /// @param frame The frame that should be resetted
 void Camera::ResetFrame(Frame frame)
 {
-    try
-    {
-        if (frame.buffer)
-        {
-            free(frame.buffer);
-        }
-    }
-    catch (const std::exception &e)
-    {
-        Serial.println("Could free the heap.");
-    }
-
     frame.buffer = NULL;
     frame.length = 0;
     frame.index = 0;
