@@ -29,15 +29,11 @@ static const char *TAG = "camera";
 #define PCLK_GPIO_NUM 13
 #pragma endregion camera_pins
 
-// Frame::Frame(const size_t &jpg_buf_len, uint8_t *jpg_buf)
-// {
-//     Serial.printf("Buffer length of frame is: %x", jpg_buf_len);
-//     Serial.println();
-//     Frame::_jpg_buf_len = _jpg_buf_len;
-//     Frame::_jpg_buf = _jpg_buf;
-// }
-
-Camera::Camera(){
+/**
+ * @brief inits some variables for the camera class
+ */
+Camera::Camera()
+{
     Camera::fb = NULL;
     Camera::res = ESP_OK;
     Camera::_jpg_buf_len = 0;
@@ -45,14 +41,17 @@ Camera::Camera(){
     Camera::last_frame = 0;
 }
 
-Camera::~Camera(){
+/// @brief clean all the used buffers
+Camera::~Camera()
+{
     if (Camera::fb)
     {
         Serial.println("clean frame buffer.");
         esp_camera_fb_return(Camera::fb);
         Camera::fb = NULL;
     }
-    if(Camera::_jpg_buf){
+    if (Camera::_jpg_buf)
+    {
         free(Camera::_jpg_buf);
     }
 }
@@ -112,7 +111,6 @@ void Camera::SetupCamera()
 {
     Serial.print("Setup camera.");
     Serial.println();
-
     camera_config_t config = setupCameraPins();
     esp_err_t err = esp_camera_init(&config);
     if (err != ESP_OK)
@@ -132,12 +130,12 @@ void Camera::SetupCamera()
  * @return the path to the UI. If the camera can't be found,
  * an error is logged and null is the return
  */
-char *Camera::GetCameraUi()
+String Camera::GetCameraUi()
 {
     sensor_t *s = esp_camera_sensor_get();
     if (s != NULL)
     {
-        char *fileContent;
+        String fileContent;
         if (s->id.PID == OV3660_PID)
         {
             fileContent = "/index_ov3660.html";
@@ -156,9 +154,12 @@ char *Camera::GetCameraUi()
     {
         ESP_LOGE(TAG, "Camera sensor not found");
     }
-    return NULL;
+    return "";
 }
 
+/// @brief If the method get's called it returns a single frame as jpg.
+/// That can be used for a stream like behavior
+/// @return A single frame, as jpg
 Frame Camera::GetCameraStream()
 {
     Frame frame = Frame();
@@ -183,8 +184,8 @@ Frame Camera::GetCameraStream()
     }
     else
     {
-        Camera::_timestamp.tv_sec = Camera::fb->timestamp.tv_sec;
-        Camera::_timestamp.tv_usec = Camera::fb->timestamp.tv_usec;
+        frame.timestamp.tv_sec = Camera::fb->timestamp.tv_sec;
+        frame.timestamp.tv_usec = Camera::fb->timestamp.tv_usec;
         if (Camera::fb->format != PIXFORMAT_JPEG)
         {
             Serial.println("Try to convert to jpeg.");
@@ -198,14 +199,10 @@ Frame Camera::GetCameraStream()
                 Camera::res = ESP_FAIL;
             }
         }
-        else
-        {
-            Serial.println("save frame.");
-            frame._jpg_buf_len = Camera::fb->len;
-            frame._jpg_buf = Camera::fb->buf;
-        }
+        Serial.println("save frame.");
+        frame.length = Camera::fb->len;
+        frame.buffer = Camera::fb->buf;
     }
     Serial.println("return frame.");
     return frame;
-    // return test;
 }
