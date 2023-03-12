@@ -99,7 +99,8 @@ camera_config_t Camera::setupCameraPins()
         config.frame_size = FRAMESIZE_SVGA;
         config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
         config.fb_location = CAMERA_FB_IN_DRAM;
-        config.jpeg_quality = 3;
+        // 3 is the best possible value
+        config.jpeg_quality = 63;
         config.fb_count = 1;
     }
     return config;
