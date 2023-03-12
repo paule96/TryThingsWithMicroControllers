@@ -43,9 +43,9 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
   //index equals the amount of bytes that have been already sent
   //You will be asked for more data until 0 is returned
   //Keep in mind that you can not delay or yield waiting for more data!
-  Serial.printf("Starting stream frame. Max length: %x, ", maxLen);
+  Serial.printf("Starting stream frame. Max length: %u, ", maxLen);
     Frame frame = camera.GetCameraStream();
-    Serial.printf("Frame length: %x", frame.length);
+    Serial.printf("Frame length: %u", frame.length);
     Serial.println();
     size_t size = 0;
 
@@ -73,7 +73,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     Serial.println("Write jpeg");
     memcpy(buffer, frame.buffer,frame.length);
     // the buffer cursor shouldn't be moved here
-    Serial.printf("finish response with a size of: %x", size);
+    Serial.printf("finish response with a size of: %u", size);
     Serial.println();
     return size; });
   // disable CORS
@@ -91,7 +91,7 @@ void SingleImage(AsyncWebServerRequest *request){
 
   request->send("image/jpeg", 100000000, [](uint8_t *buffer, size_t maxLen, size_t index) -> size_t{
     Frame frame = camera.GetCameraStream();
-    Serial.printf("Frame length: %x", frame.length);
+    Serial.printf("Frame length: %u", frame.length);
     Serial.println();
     memcpy(buffer, frame.buffer, frame.length);
     return frame.length;
