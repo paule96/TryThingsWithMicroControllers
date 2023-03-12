@@ -84,6 +84,18 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
   // answer the request
   request->send(response);
 }
+/// @brief Responde to a request with a single image
+/// @param request The request, that will responded with an image
+void SingleImage(AsyncWebServerRequest *request){
+
+  request->send("image/jpeg", 100000000, [](uint8_t *buffer, size_t maxLen, size_t index) -> size_t{
+    Frame frame = camera.GetCameraStream();
+    Serial.printf("Frame length: %x", frame.length);
+    Serial.println();
+    memcpy(buffer, frame.buffer, frame.length);
+    return frame.length;
+  });
+}
 
 /**
  * @brief starts a webserver to serve the camerui and the stream
@@ -99,6 +111,8 @@ void StartCameraServer()
             { request->send(filesystem, camera.GetCameraUi(), "text/html"); });
   // adds a handler for sending the camera stream
   server.on("/stream", HTTP_GET, StreamCameraFeed);
+  // adds a handler for sending the camera stream
+  server.on("/image", HTTP_GET, SingleImage);
   // starts the server
   server.begin();
   ESP_LOGI(TAG, "Starting stream server on port: '80'");

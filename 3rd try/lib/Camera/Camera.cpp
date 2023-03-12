@@ -154,7 +154,7 @@ String Camera::GetCameraUi()
     {
         ESP_LOGE(TAG, "Camera sensor not found");
     }
-    return "";
+    return String();
 }
 
 /// @brief If the method get's called it returns a single frame as jpg.
