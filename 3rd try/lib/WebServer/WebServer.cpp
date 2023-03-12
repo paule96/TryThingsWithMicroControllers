@@ -73,7 +73,7 @@ public:
     size_t size = 0;
 
     // always remember: memcpy don't moves the cursor, so this is always a two liner
-    if (index == 0)
+    if (frame.index == 0)
     {
       // write the boundry at the beginning of the request
       Serial.println("Write boundry");
