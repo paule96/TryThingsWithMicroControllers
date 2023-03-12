@@ -19,12 +19,12 @@ If you want a faster setup you can create a project with the ardoino framework:
 GPIO 2 = small blue LED
 GPIO 48 = big white LED
 
-Start a project with:
+Start a project with on windows:
 
 ```bash
 git fetch
 git pull
-~/.platformio/penv/bin/pio run --target upload --target monitor --environment esp32-s3-devkitc1
+~/.platformio/penv/Scripts/platformio run --target upload --target monitor --environment esp32-s3-devkitc-1
 ```
 
 ## Freenove_Ultimate_Starter_Kit_for_ESP32_S3
