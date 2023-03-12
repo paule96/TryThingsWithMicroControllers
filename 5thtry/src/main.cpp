@@ -2,6 +2,8 @@
 
 void setup()
 {
+    Serial.begin(115200);
+    Serial.setDebugOutput(true);
     Serial.printf("Total heap: %d", ESP.getHeapSize());
     Serial.println();
     Serial.printf("Free heap: %d", ESP.getFreeHeap());
