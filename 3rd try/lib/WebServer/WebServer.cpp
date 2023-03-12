@@ -69,7 +69,7 @@ public:
     }
 
     // Serial.printf("Frame length: %u, And the index is at: %u", frame.length, frame.index);
-    Serial.println();
+    // Serial.println();
     size_t size = 0;
 
     // always remember: memcpy don't moves the cursor, so this is always a two liner
@@ -107,7 +107,7 @@ public:
     // the buffer cursor shouldn't be moved here
     // Serial.printf("finish response with a size of: %u", maxLen);
     index += maxLen;
-    Serial.println();
+    // Serial.println();
     return maxLen;
   }
 };
