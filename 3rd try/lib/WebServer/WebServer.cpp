@@ -17,20 +17,20 @@ Camera camera;
 /**
  * @brief This will define a section in a multipart HTTP request.
  * This webserver will only use one section in the mulitpart HTTP request.
-*/
+ */
 #define PART_BOUNDARY "123456789000000000000987654321"
 /**
  * @brief The content type of the stream response
-*/
+ */
 static const char *_STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
 /**
  * @brief marks the start of a single part of a multipart HTTP request
-*/
+ */
 static const char *_STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
 /**
  * @brief The headers of a single part of a multipart HTTP request;
  * Never forget to format this string.
-*/
+ */
 static const char *_STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\nX-Timestamp: %d.%06d\r\n\r\n";
 
 /// @brief makes it possible returns a stream of the camera
@@ -47,32 +47,35 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     Frame frame = camera.GetCameraStream();
     Serial.printf("Frame length: %x", frame.length);
     Serial.println();
-    char* part_buf[128];
-    size_t maxBufferRead;
-    size_t hlen = snprintf((char *)part_buf, 128, _STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
-    size_t size = frame.length + hlen + strlen(_STREAM_BOUNDARY);
-    Serial.println(_STREAM_BOUNDARY);
-    Serial.println(_STREAM_PART);
+    size_t size = 0;
 
-    if(maxLen > size){
-      maxBufferRead = size;
-    }else{
-      maxBufferRead = maxLen;
-    }
-    Serial.printf(_STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
-
-    Serial.println("Write boundry");
     // always remember: memcpy don't moves the cursor, so this is always a two liner
-    memcpy(buffer, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
-    buffer += strlen(_STREAM_BOUNDARY);
+    if(index){
+      Serial.println("Write boundry");
+      Serial.println(_STREAM_BOUNDARY);
+      size_t blen = strlen(_STREAM_BOUNDARY);
+      memcpy(buffer, _STREAM_BOUNDARY, blen);
+      size += blen;
+      buffer += blen;
+    }
+
     Serial.println("Write part header");
-    memcpy(buffer, &part_buf, hlen);
+    Serial.printf(_STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
+    size_t hlen = sprintf((char *)buffer, _STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
     buffer += hlen;
+    size += hlen;
+
+    // get the max lenght minus headers
+    size_t maxBodyLenght = maxLen - size;
+    if(maxBodyLenght > frame.length){
+      size = maxBodyLenght - frame.length;
+    }
     Serial.println("Write jpeg");
-    memcpy(buffer, &frame.buffer,frame.length);
-    buffer += frame.length;
-    Serial.println("finish response");
-    return maxBufferRead; });
+    memcpy(buffer, frame.buffer,frame.length);
+    // the buffer cursor shouldn't be moved here
+    Serial.printf("finish response with a size of: %x", size);
+    Serial.println();
+    return size; });
   // disable CORS
   // TODO: check if we really need it. It should be okay without
   response->addHeader("Access-Control-Allow-Origin", "*");
@@ -103,7 +106,7 @@ void StartCameraServer()
 
 /**
  * @brief This will stop the webserver that provide the stream and the camera.
-*/
+ */
 void StopCameraServer()
 {
   // first dispose the camera
