@@ -1,11 +1,15 @@
-#include "Arduino.h";
+#include "Arduino.h"
 
 void setup()
 {
-    log_d("Total heap: %d", ESP.getHeapSize());
-    log_d("Free heap: %d", ESP.getFreeHeap());
-    log_d("Total PSRAM: %d", ESP.getPsramSize());
-    log_d("Free PSRAM: %d", ESP.getFreePsram());
+    Serial.printf("Total heap: %d", ESP.getHeapSize());
+    Serial.println();
+    Serial.printf("Free heap: %d", ESP.getFreeHeap());
+    Serial.println();
+    Serial.printf("Total PSRAM: %d", ESP.getPsramSize());
+    Serial.println();
+    Serial.printf("Free PSRAM: %d", ESP.getFreePsram());
+    Serial.println();
 }
 
 void loop()
