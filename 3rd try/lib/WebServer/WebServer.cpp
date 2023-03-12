@@ -59,7 +59,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
     }else{
       maxBufferRead = maxLen;
     }
-    Serial.printf(_STREAM_PART, maxBufferRead, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
+    Serial.printf(_STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
 
     Serial.println("Write boundry");
     // always remember: memcpy don't moves the cursor, so this is always a two liner
