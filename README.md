@@ -13,7 +13,7 @@ This will setup a project for the `Espressif ESP32-S3`. The development framewor
 If you want a faster setup you can create a project with the ardoino framework:
 
 ```bash
-~/.platformio/penv/bin/pio project init -b esp32-s3-devkitc-1 --ide vscode --project-option
+~/.platformio/penv/bin/pio project init -b esp32-s3-devkitc-1 --ide vscode
 ```
 
 GPIO 2 = small blue LED
