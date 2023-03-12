@@ -96,10 +96,10 @@ public:
 
     // get the max lenght minus headers
     size_t maxBodyLenght = maxLen - size;
-    if (maxBodyLenght > frame.length)
+    if (maxBodyLenght > (frame.length - frame.index))
     {
-      maxLen -= maxBodyLenght - frame.length;
-      maxBodyLenght = frame.length;
+      maxLen -= maxBodyLenght - (frame.length - frame.index);
+      maxBodyLenght = (frame.length - frame.index);
     }
     Serial.println("Write jpeg");
     memcpy(buffer, frame.buffer, maxBodyLenght);
