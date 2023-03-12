@@ -11,6 +11,10 @@
 			"name": "3rd try"
 		},
 		{
+			"path": "4th try",
+			"name": "4th try"
+		},
+		{
 			"name": "root",
 			"path": "./"
 		}
@@ -60,7 +64,9 @@
 			"*.tcc": "cpp",
 			"fstream": "cpp",
 			"sstream": "cpp",
-			"regex": "cpp"
+			"regex": "cpp",
+			"string_view": "cpp",
+			"rope": "cpp"
 		}
 
 	},
