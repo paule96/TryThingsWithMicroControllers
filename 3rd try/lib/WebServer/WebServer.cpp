@@ -81,6 +81,7 @@ void StreamCameraFeed(AsyncWebServerRequest *request)
   response->addHeader("Access-Control-Allow-Origin", "*");
   // a header to define the max framerate
   response->addHeader("X-Framerate", "60");
+  Serial.println("Now start sending the request.");
   // answer the request
   request->send(response);
 }
