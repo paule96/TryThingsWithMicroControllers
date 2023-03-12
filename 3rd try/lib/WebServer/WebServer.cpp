@@ -102,7 +102,7 @@ public:
       maxBodyLenght = (frame.length - frame.index);
     }
     Serial.println("Write jpeg");
-    memcpy(buffer, frame.buffer, maxBodyLenght);
+    memcpy(buffer, frame.buffer + frame.index, maxBodyLenght);
     frame.index += maxBodyLenght;
     // the buffer cursor shouldn't be moved here
     Serial.printf("finish response with a size of: %u", maxLen);
