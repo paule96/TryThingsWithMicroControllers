@@ -77,12 +77,13 @@ camera_config_t Camera::setupCameraPins()
     config.pin_pclk = PCLK_GPIO_NUM;
     config.pin_vsync = VSYNC_GPIO_NUM;
     config.pin_href = HREF_GPIO_NUM;
-    config.pin_sscb_sda = SIOD_GPIO_NUM;
+    config.pin_sccb_sda = SIOD_GPIO_NUM;
     config.pin_sccb_scl = SIOC_GPIO_NUM;
     config.pin_pwdn = PWDN_GPIO_NUM;
     config.pin_reset = RESET_GPIO_NUM;
     config.xclk_freq_hz = 20000000;
     config.pixel_format = PIXFORMAT_JPEG;
+
     // if PSRAM IC present,init with UXGA resolution and higher JPEG quality
     // for larger pre-allocated framebuffer.
     if (psramFound())
@@ -127,35 +128,22 @@ void Camera::SetupCamera()
 }
 
 /**
- * @brief finds out wich camera module is used and returns the path to the HTML UI for it
- * @return the path to the UI. If the camera can't be found,
- * an error is logged and null is the return
+ * @brief Get's the camera sensor that is installed
+ * @return returns the type if the sensor
  */
-String Camera::GetCameraUi()
+Sensor Camera::GetSensor()
 {
     sensor_t *s = esp_camera_sensor_get();
-    if (s != NULL)
-    {
-        String fileContent;
-        if (s->id.PID == OV3660_PID)
-        {
-            fileContent = "/index_ov3660.html";
-        }
-        else if (s->id.PID == OV5640_PID)
-        {
-            fileContent = "/index_ov5640.html";
-        }
-        else
-        {
-            fileContent = "/index_ov2640.html";
-        }
-        return fileContent;
-    }
-    else
+    Sensor sensor = Sensor();
+    if (s == nullptr)
     {
         ESP_LOGE(TAG, "Camera sensor not found");
+        return sensor;
     }
-    return String();
+    // camera_pid_t result = static_cast<camera_pid_t>(s->id.PID);
+
+    sensor.type = static_cast<camera_pid_t>(s->id.PID);
+    return sensor;
 }
 
 /// @brief Resets a frame object and free the memory for it

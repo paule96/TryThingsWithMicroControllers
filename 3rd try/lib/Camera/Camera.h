@@ -11,13 +11,18 @@ struct Frame
     timeval timestamp;
 };
 
+struct Sensor{
+    /// @brief can be empty type. Please check just for known types
+    camera_pid_t type;
+};
+
 class Camera
 {
 public:
     Camera();
     ~Camera();
     void SetupCamera();
-    String GetCameraUi();
+    Sensor GetSensor();
     Frame GetCameraStream();
     void ResetFrame(Frame frame);
 private:
@@ -28,3 +33,4 @@ private:
     uint8_t **_jpg_buf;
     int64_t last_frame;
 };
+

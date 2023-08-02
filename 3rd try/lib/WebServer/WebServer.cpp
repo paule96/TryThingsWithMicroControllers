@@ -141,6 +141,34 @@ void SingleImage(AsyncWebServerRequest *request)
 }
 
 /**
+ * @brief finds out wich camera module is used and returns the path to the HTML UI for it
+ * @return the path to the UI. If the camera can't be found,
+ * an error is logged and null is the return
+ */
+String GetCameraUi(Camera camera)
+{
+  ESP_LOGI(TAG, "Try to get camera sensor.");
+  Sensor sensor = camera.GetSensor();
+  switch (sensor.type)
+  {
+    case OV3660_PID:
+      return "/index_ov3660.html";
+      break;
+    case OV5640_PID:
+      return "/index_ov5640.html";
+      break;
+    case OV2640_PID:
+      return "/index_ov2640.html";
+      break;
+    default:
+      ESP_LOGI(TAG, "Couldn't find a sensor.");
+      // no sensor found
+      return String();
+      break;
+  }
+}
+
+/**
  * @brief starts a webserver to serve the camerui and the stream
  */
 void StartCameraServer()
@@ -151,7 +179,7 @@ void StartCameraServer()
   filesystem = GetCurrentMount();
   // adds a handler for the index of the webserver
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(filesystem, camera.GetCameraUi(), "text/html"); });
+            { request->send(filesystem, GetCameraUi(camera), "text/html"); });
   // adds a handler for sending the camera stream
   server.on("/stream", HTTP_GET, StreamCameraFeed);
   // adds a handler for sending the camera stream
