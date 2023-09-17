@@ -65,19 +65,18 @@ public:
     {
       // cleanup old frame and load a new frame here
       camera.ResetFrame(frame);
-      frame = camera.GetCameraStream();
+      frame = camera.GetCameraStream({153, 72, 89});
+      ESP_LOGI(TAG, "Now start processing the image in the webserver");
     }
 
-    // Serial.printf("Frame length: %u, And the index is at: %u", frame.length, frame.index);
-    // Serial.println();
+    ESP_LOGI(TAG, "Frame length: %u, And the index is at: %u", frame.length, frame.index);
     size_t size = 0;
 
     // always remember: memcpy don't moves the cursor, so this is always a two liner
     if (frame.index == 0)
     {
       // write the boundry at the beginning of the request
-      // Serial.println("Write boundry");
-      // Serial.println(_STREAM_BOUNDARY);
+      ESP_LOGI(TAG, "Write boundry");
       size_t blen = strlen(_STREAM_BOUNDARY);
       memcpy(buffer, _STREAM_BOUNDARY, blen);
       size += blen;
@@ -87,7 +86,7 @@ public:
     if (frame.index == 0)
     {
       // only write a part header if the part starts
-      // Serial.println("Write part header");
+      ESP_LOGI(TAG, "Write part header");
       // Serial.printf(_STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
       size_t hlen = sprintf((char *)buffer, _STREAM_PART, frame.length, frame.timestamp.tv_sec, frame.timestamp.tv_usec);
       buffer += hlen;
@@ -101,11 +100,11 @@ public:
       maxLen -= maxBodyLenght - (frame.length - frame.index);
       maxBodyLenght = (frame.length - frame.index);
     }
-    // Serial.println("Write jpeg");
+    ESP_LOGI(TAG, "Write jpeg");
     memcpy(buffer, frame.buffer + frame.index, maxBodyLenght);
     frame.index += maxBodyLenght;
     // the buffer cursor shouldn't be moved here
-    // Serial.printf("finish response with a size of: %u", maxLen);
+    ESP_LOGI(TAG, "finish response with a size of: %u", maxLen);
     index += maxLen;
     // Serial.println();
     return maxLen;
@@ -151,20 +150,20 @@ String GetCameraUi(Camera camera)
   Sensor sensor = camera.GetSensor();
   switch (sensor.type)
   {
-    case OV3660_PID:
-      return "/index_ov3660.html";
-      break;
-    case OV5640_PID:
-      return "/index_ov5640.html";
-      break;
-    case OV2640_PID:
-      return "/index_ov2640.html";
-      break;
-    default:
-      ESP_LOGI(TAG, "Couldn't find a sensor.");
-      // no sensor found
-      return String();
-      break;
+  case OV3660_PID:
+    return "/index_ov3660.html";
+    break;
+  case OV5640_PID:
+    return "/index_ov5640.html";
+    break;
+  case OV2640_PID:
+    return "/index_ov2640.html";
+    break;
+  default:
+    ESP_LOGI(TAG, "Couldn't find a sensor.");
+    // no sensor found
+    return String();
+    break;
   }
 }
 

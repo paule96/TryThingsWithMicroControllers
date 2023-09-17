@@ -6,6 +6,8 @@
 #include "WebServer.h"
 #include "esp_log.h"
 #include "esp32-hal-log.h"
+#include "color_detector.hpp"
+
 
 #pragma region wlan_config
 // TODO: should be somehow typed in by the user.
@@ -93,7 +95,6 @@ void setup()
   }
   Serial.println();
   Serial.println("wifi connected");
-
   StartCameraServer();
   Serial.print("Camera ready! Use 'http://"+ getIpV4Address(WiFi.localIP()) + " to connect");
   Serial.println();
@@ -101,6 +102,12 @@ void setup()
 
 void loop()
 {
+
+
+
+
+
+
   // disableAllLeds();
   // the main loop is the camera server. So we just set this CPU task to delay as long as he can.
   delay(100000);
